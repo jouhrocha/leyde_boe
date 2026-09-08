@@ -26,7 +26,7 @@ LEYDE_BOE/
 ├── server.py              # Servidor Flask con API
 ├── index.html             # Página principal (buscador)
 ├── login.html             # Sistema de autenticación
-├── maquetador-leydeboe.html  # Maquetador de documentos
+├── maquetador.html  # Maquetador de documentos
 ├── requirements.txt       # Dependencias Python
 ├── leyes_boe.db          # Base de datos SQLite (1.5GB)
 ├── public/               # Imágenes y recursos estáticos

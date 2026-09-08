@@ -322,11 +322,11 @@ def parse_acto_xml(xml_text: str, acto_id: str) -> dict:
         return {"acto_id": acto_id, "anuncios": [], "xml_raw": xml_text}
 
     anuncios = []
-    texto_node = root.find(".//texto")
+    texto_node = root.find("//texto")
     if texto_node is None:
         texto_node = root
 
-    for anuncio_node in texto_node.findall(".//anuncio"):
+    for anuncio_node in texto_node.findall("//anuncio"):
         anuncio_id = anuncio_node.get("id", "")
 
         empresa = _xml_text(anuncio_node.find("empresa"))

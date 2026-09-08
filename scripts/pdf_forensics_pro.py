@@ -40,7 +40,7 @@ Uso:
     python3 pdf_forensics_pro.py /ruta/a/carpeta/
 
     # Con opciones
-    python3 pdf_forensics_pro.py /ruta/pdfs/ --output-dir ./informes --verbose
+    python3 pdf_forensics_pro.py /ruta/pdfs/ --output-dir /informes --verbose
 """
 
 import sys
@@ -3063,13 +3063,13 @@ def main():
         Ejemplos:
           python3 pdf_forensics_pro.py documento.pdf
           python3 pdf_forensics_pro.py /ruta/a/carpeta/
-          python3 pdf_forensics_pro.py /ruta/ --output-dir ./informes --verbose
+          python3 pdf_forensics_pro.py /ruta/ --output-dir /informes --verbose
         """)
     )
     parser.add_argument("target",
                          help="Archivo PDF o directorio con PDFs a analizar")
-    parser.add_argument("--output-dir", "-o", default="./forensic_reports",
-                         help="Directorio de salida (default: ./forensic_reports)")
+    parser.add_argument("--output-dir", "-o", default="/forensic_reports",
+                         help="Directorio de salida (default: /forensic_reports)")
     parser.add_argument("--verbose", "-v", action="store_true",
                          help="Modo verbose (más detalles)")
     parser.add_argument("--version", action="version",

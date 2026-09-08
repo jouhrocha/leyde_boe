@@ -300,7 +300,7 @@ def obtener_entradas_fecha(fecha: date) -> list:
             root = ET.fromstring(resp.content)
         except ET.ParseError:
             return []
-        code = root.find('.//code')
+        code = root.find('//code')
         if code is not None and code.text and code.text.strip() != '200':
             return []
         entradas  = []

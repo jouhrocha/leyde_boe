@@ -166,10 +166,10 @@ def rama_de(ley):
 # -------------------------------------------------------------------------- #
 PAGES = {
     "/": "index.html",
-    "/maquetador-leydeboe.html": "maquetador-leydeboe.html",
+    "/maquetador.html": "maquetador.html",
     "/leyde-nav-drawer.html": "leyde-nav-drawer.html",
     "/login.html": "login.html",
-    "/planes-leydeboe.html": "index.html",
+    "/planes.html": "index.html",
     "/nuevo-modulo.html": "index.html",
 }
 

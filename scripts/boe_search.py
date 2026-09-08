@@ -86,7 +86,7 @@ def _fragmento(texto: str, query: str, largo: int = 160) -> str:
 
 
 # ── /maquetador  ─────────────────────────────────────────────────────────
-@boe_bp.route("/maquetador")
+@boe_bp.route("maquetador")
 def maquetador():
     """Sirve el maquetador jurídico (fichero maquetador.html)."""
     return send_from_directory(

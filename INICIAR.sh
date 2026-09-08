@@ -19,7 +19,20 @@ if ! python3 -c "import flask" 2>/dev/null; then
     python3 -m pip install -r requirements.txt --break-system-packages
 fi
 
-# 2) Liberar el puerto 5000 si algo lo ocupa
+# 2) Limpiar caché de Python/Flask y navegador antes de arrancar
+echo -e "${YELLOW}Limpiando caché (Python/Flask/navegador)...${NC}"
+# -- Caché de Python (bytecode compilado)
+find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null
+find . -type f -name '*.pyc' -delete 2>/dev/null
+find . -type f -name '*.pyo' -delete 2>/dev/null
+# -- Caché de Flask (archivos de sesión temporales)
+rm -rf .flask_session 2>/dev/null
+rm -rf flask_session 2>/dev/null
+# -- Caché del navegador (si lanzamos Chromium/Chrome)
+rm -rf ~/.cache/chromium /tmp/chromium_* 2>/dev/null
+echo -e "${GREEN}✔ Caché limpiada${NC}"
+
+# 3) Liberar el puerto 5000 si algo lo ocupa
 PID=$(lsof -ti:5000 2>/dev/null)
 if [ -n "$PID" ]; then
     echo -e "${YELLOW}Liberando puerto 5000...${NC}"
@@ -31,11 +44,11 @@ URL="http://localhost:5000"
 echo -e "${GREEN}🚀 Arrancando LEYDE BOE...${NC}"
 echo -e "${CYAN}   Abriendo: ${URL}${NC}"
 
-# 3) Arrancar el servidor en segundo plano
+# 4) Arrancar el servidor en segundo plano
 python3 server.py &
 SERVER_PID=$!
 
-# 4) Esperar a que el servidor responda
+# 5) Esperar a que el servidor responda
 printf "Esperando al servidor"
 for i in $(seq 1 40); do
     if curl -s -o /dev/null --max-time 1 http://localhost:5000/api/stats 2>/dev/null; then
@@ -46,7 +59,7 @@ for i in $(seq 1 40); do
     sleep 1
 done
 
-# 5) Abrir la app en el navegador
+# 6) Abrir la app en el navegador
 if command -v xdg-open >/dev/null 2>&1; then
     xdg-open "$URL" >/dev/null 2>&1 &
 elif command -v sensible-browser >/dev/null 2>&1; then
@@ -57,6 +70,6 @@ fi
 
 echo -e "${GREEN}✅ App abierta. Para apagarla usa el botón \"Apagar\" dentro de la app.${NC}"
 
-# 6) Mantener el script vivo hasta que se apague desde la app
+# 7) Mantener el script vivo hasta que se apague desde la app
 wait $SERVER_PID
 echo -e "${RED}🛑 Servidor apagado. Hasta luego.${NC}"

@@ -166,10 +166,10 @@ def rama_de(ley):
 # -------------------------------------------------------------------------- #
 PAGES = {
     "/": "index.html",
-    "/maquetador.html": "maquetador.html",
+    "maquetador.html": "maquetador.html",
+    "planes.html": "planes.html",
     "/leyde-nav-drawer.html": "leyde-nav-drawer.html",
     "/login.html": "login.html",
-    "/planes.html": "index.html",
     "/nuevo-modulo.html": "index.html",
 }
 
@@ -189,8 +189,9 @@ def serve(path):
         return send_from_directory(str(BASE / folder), seg)
 
     # Rutas de pagina conocidas
-    if path in PAGES:
-        fname = BASE / PAGES[path]
+    key = "/" + path          # normaliza la clave para coincidir con PAGES (claves con barra)
+    if key in PAGES:
+        fname = BASE / PAGES[key]
         if fname.exists():
             return Response(fname.read_bytes(), content_type="text/html")
         return "Pagina no disponible", 404

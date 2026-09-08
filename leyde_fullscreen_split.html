@@ -1,0 +1,81 @@
+
+<style>
+.dv{width:100%;height:500px;background:#04090f;position:relative;overflow:hidden;border-radius:8px;font-family:sans-serif}
+.half{position:absolute;top:0;height:100%;width:50%;overflow:hidden;transition:transform 1.5s cubic-bezier(0.77,0,0.175,1)}
+.hl{left:0}
+.hr{right:0}
+.hl img{position:absolute;top:0;left:0;width:200%;height:100%;object-fit:cover;object-position:left center}
+.hr img{position:absolute;top:0;right:0;width:200%;height:100%;object-fit:cover;object-position:right center}
+.hl.open{transform:translateX(-100%)}
+.hr.open{transform:translateX(100%)}
+.seam{position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:100%;background:rgba(0,212,200,0.35);z-index:5;pointer-events:none;transition:opacity 0.3s}
+.scan{position:absolute;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,200,0.4),transparent);animation:sc 3s linear infinite;z-index:6;pointer-events:none}
+@keyframes sc{0%{top:0}100%{top:100%}}
+.overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.3s;padding:1rem}
+.overlay.fade{opacity:0;pointer-events:none}
+.otitle{font-size:clamp(1.4rem,3vw,2.2rem);letter-spacing:0.25em;text-transform:uppercase;color:#e8eef4;font-weight:300;margin-bottom:0.2rem;text-shadow:0 2px 20px rgba(0,0,0,0.8)}
+.osub{font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:rgba(0,212,200,0.85);margin-bottom:1.5rem;text-shadow:0 2px 10px rgba(0,0,0,0.8)}
+.cpanel{background:rgba(4,9,15,0.82);border:1px solid rgba(0,212,200,0.2);padding:1.3rem 1.8rem;max-width:340px;width:100%;text-align:center;backdrop-filter:blur(8px)}
+.cx{font-size:11px;color:#7a9ab0;line-height:1.75;margin-bottom:1.1rem}
+.cbtns{display:flex;gap:0.6rem;justify-content:center;flex-direction:column}
+.ca{background:#00d4c8;border:none;color:#04090f;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;font-weight:700;padding:0.7rem 1.5rem;cursor:pointer;transition:background 0.2s}
+.ca:hover{background:#00a89e}
+.cr{background:transparent;border:1px solid rgba(255,255,255,0.12);color:#5a7289;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;padding:0.6rem 1.5rem;cursor:pointer}
+.cl{margin-top:0.8rem;font-size:9px;color:#2a3a4a;letter-spacing:0.05em}
+.cl a{color:#3a5a6a;text-decoration:none}
+.behind{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:1}
+.bt{font-size:20px;letter-spacing:0.2em;text-transform:uppercase;color:#e8eef4;font-weight:300;margin-bottom:0.3rem}
+.bs{font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(0,212,200,0.7);margin-bottom:1.2rem}
+.br{background:transparent;border:1px solid rgba(0,212,200,0.25);color:rgba(0,212,200,0.6);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:0.45rem 1rem;cursor:pointer}
+</style>
+
+<div class="dv">
+  <div class="scan" id="scan"></div>
+  <div class="behind">
+    <div class="bt">LEYDE BOE</div>
+    <div class="bs">Motor Jurídico Legislativo</div>
+    <button class="br" onclick="reset()">↺ Ver entrada de nuevo</button>
+  </div>
+  <div class="half hl" id="hl">
+    <img src="https://leydeboe.com/public/LEYDE-PNG-WEB.png" alt="" onerror="this.parentElement.style.background='#0a1220'">
+  </div>
+  <div class="half hr" id="hr">
+    <img src="https://leydeboe.com/public/LEYDE-PNG-WEB.png" alt="" onerror="this.parentElement.style.background='#0a1220'">
+  </div>
+  <div class="seam" id="seam"></div>
+  <div class="overlay" id="ov">
+    <div class="otitle">LEYDE BOE</div>
+    <div class="osub">Motor Jurídico Legislativo</div>
+    <div class="cpanel">
+      <div class="cx">Utilizamos cookies propias esenciales para el funcionamiento del servicio. No utilizamos cookies publicitarias ni cedemos datos a terceros.</div>
+      <div class="cbtns">
+        <button class="ca" onclick="openGate()">Aceptar y entrar</button>
+        <button class="cr" onclick="openGate()">Solo esenciales</button>
+      </div>
+      <div class="cl"><a href="./privacidad">Política de privacidad</a> · <a href="./cookies">Política de cookies</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openGate(){
+  document.getElementById('ov').classList.add('fade');
+  document.getElementById('seam').style.opacity='0';
+  document.getElementById('scan').style.display='none';
+  setTimeout(function(){
+    document.getElementById('hl').classList.add('open');
+    document.getElementById('hr').classList.add('open');
+  },280);
+}
+function reset(){
+  var hl=document.getElementById('hl'),hr=document.getElementById('hr');
+  hl.style.transition='none';hr.style.transition='none';
+  hl.classList.remove('open');hr.classList.remove('open');
+  document.getElementById('seam').style.opacity='1';
+  document.getElementById('scan').style.display='block';
+  setTimeout(function(){
+    hl.style.transition='';hr.style.transition='';
+    document.getElementById('ov').classList.remove('fade');
+  },50);
+}
+</script>

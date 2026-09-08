@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEYDE BOE — Nav Drawer Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04090f;
+  --bg2:#070d16;
+  --bg3:#0a1220;
+  --cyan:#00d4c8;
+  --cyan2:#00a89e;
+  --cyan-border:rgba(0,212,200,0.22);
+  --cyan-glow:rgba(0,212,200,0.18);
+  --amber:#f5a623;
+  --amber2:#d48a10;
+  --pearl:#e8eef4;
+  --text:#e8eef4;
+  --text2:#8fa4b8;
+  --text3:#5a7289;
+  --text4:#3a5060;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.1);
+  --drawer-w:360px;
+}
+#nav-tab{
+  position:fixed;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:8000;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:18px 9px;
+  background:rgba(7,13,22,0.9);
+  border:1px solid var(--border2);
+  border-left:none;
+  border-radius:0 4px 4px 0;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#nav-tab::before{
+  content:'';
+  position:absolute;
+  left:-1px;top:20%;bottom:20%;
+  width:2px;
+  background:linear-gradient(180deg,transparent,var(--cyan),transparent);
+  opacity:0;
+  transition:opacity 0.3s;
+}
+#nav-tab:hover::before,
+#nav-tab.open::before{ opacity:1 }
+#nav-tab:hover,
+#nav-tab.open{
+  border-color:var(--cyan-border);
+  box-shadow:4px 0 24px rgba(0,212,200,0.12), 2px 0 8px rgba(0,0,0,0.5);
+  background:rgba(10,18,32,0.95);
+}
+.tab-lines{
+  display:flex;flex-direction:column;gap:4px;
+}
+.tab-line{
+  width:14px;height:1.5px;
+  background:var(--text3);
+  transition:all 0.3s;
+  transform-origin:center;
+}
+#nav-tab.open .tab-line:nth-child(1){ transform:rotate(45deg) translate(4px,4px); background:var(--cyan); }
+#nav-tab.open .tab-line:nth-child(2){ opacity:0; transform:scaleX(0); }
+#nav-tab.open .tab-line:nth-child(3){ transform:rotate(-45deg) translate(4px,-4px); background:var(--cyan); }
+#nav-tab:hover .tab-line{ background:var(--text2) }
+#nav-tab.open:hover .tab-line:nth-child(1),
+#nav-tab.open:hover .tab-line:nth-child(3){ background:var(--cyan) }
+.tab-label{
+  font-family:'Rajdhani',sans-serif;
+  font-size:8px;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:var(--text4);
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  transition:color 0.3s;
+  margin-top:4px;
+}
+#nav-tab:hover .tab-label,
+#nav-tab.open .tab-label{ color:var(--cyan) }
+#nav-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(4,9,15,0.65);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  z-index:8001;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.35s;
+}
+#nav-overlay.visible{
+  opacity:1;
+  pointer-events:all;
+}
+#nav-drawer{
+  position:fixed;
+  top:0;left:0;
+  width:var(--drawer-w);
+  max-width:100vw;
+  height:100%;
+  background:rgba(7,13,22,0.97);
+  border-right:1px solid var(--border2);
+  z-index:8002;
+  transform:translateX(calc(-1 * var(--drawer-w)));
+  transition:transform 0.42s cubic-bezier(0.4,0,0.2,1);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+#nav-drawer::before{
+  content:'';
+  position:absolute;
+  right:0;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    var(--cyan-border) 25%,
+    var(--cyan-border) 75%,
+    transparent 100%
+  );
+}
+#nav-drawer::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,200,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,200,0.02) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+#nav-drawer.open{
+  transform:translateX(0);
+}
+.drw-header{
+  padding:1.4rem 1.5rem 1.2rem;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  position:relative;
+  z-index:1;
+}
+.drw-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.15rem;
+  font-weight:300;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--text2);
+}
+.drw-logo em{font-style:italic;color:var(--cyan)}
+.drw-tagline{
+  font-size:9px;
+  letter-spacing:0.45em;
+  text-transform:uppercase;
+  color:var(--text4);
+  margin-top:3px;
+}
+.drw-scan{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:drw-scan-anim 3s ease-in-out infinite;
+  opacity:0.6;
+}
+@keyframes drw-scan-anim{
+  0%,100%{opacity:0.2;transform:scaleX(0.4)}
+  50%{opacity:0.8;transform:scaleX(1)}
+}
+.drw-section-label{
+  font-size:8px;
+  letter-spacing:0.55em;
+  text-transform:uppercase;
+  color:var(--text4);
+  padding:1.1rem 1.5rem 0.6rem;
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  flex-shrink:0;
+  position:relative;
+  z-index:1;
+}
+.drw-section-label::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border2),transparent);
+
+.drw-paths{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  overflow-y:auto;
+  position:relative;
+  z-index:1;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+}
+.drw-paths::-webkit-scrollbar{width:3px}
+.drw-paths::-webkit-scrollbar-track{background:transparent}
+.drw-paths::-webkit-scrollbar-thumb{background:var(--border2)}
+.drw-path{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:1.1rem 1.5rem;
+  cursor:pointer;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
+  transition:background 0.3s;
+  -webkit-tap-highlight-color:transparent;
+  text-decoration:none;
+}
+.drw-path:last-child{border-bottom:none}
+.drw-path::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:2px;
+  opacity:0.5;
+  transition:opacity 0.3s,transform 0.3s;
+  transform:scaleY(0.3);
+  transform-origin:center;
+}
+.drw-path:hover::before,.drw-path.active-page::before{
+  opacity:1;transform:scaleY(1);
+}
+.drw-path.active-page{
+  background:rgba(255,255,255,0.02);
+}
+.drw-path::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition:opacity 0.4s;
+  pointer-events:none;
+}
+.drw-path:hover::after{opacity:1}
+.drw-path:hover{background:rgba(255,255,255,0.025)}
+.dp-1::before{background:var(--cyan)}
+.dp-1::after{background:radial-gradient(ellipse at 0% 50%,rgba(0,212,200,0.06),transparent 70%)}
+.dp-1 .dp-num{color:var(--cyan)}
+.dp-1 .dp-tag{border-color:rgba(0,212,200,0.2);color:rgba(0,212,200,0.7)}
+.dp-1 .dp-arrow{color:var(--cyan)}
+.dp-2::before{background:var(--amber)}
+.dp-2::after{background:radial-gradient(ellipse at 0% 50%,rgba(245,166,35,0.06),transparent 70%)}
+.dp-2 .dp-num{color:var(--amber)}
+.dp-2 .dp-tag{border-color:rgba(245,166,35,0.2);color:rgba(245,166,35,0.7)}
+.dp-2 .dp-arrow{color:var(--amber)}
+.dp-3::before{background:rgba(232,238,244,0.5)}
+.dp-3::after{background:radial-gradient(ellipse at 0% 50%,rgba(232,238,244,0.04),transparent 70%)}
+.dp-3 .dp-num{color:rgba(232,238,244,0.75)}
+.dp-3 .dp-tag{border-color:rgba(232,238,244,0.15);color:rgba(232,238,244,0.5)}
+.dp-3 .dp-arrow{color:rgba(232,238,244,0.5)}
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.9rem;
+  font-weight:300;
+  font-style:italic;
+  line-height:1;
+  min-width:2.2rem;
+  text-align:center;
+  flex-shrink:0;
+  transition:transform 0.3s;
+}
+.drw-path:hover .dp-num{transform:scale(1.1)}
+.dp-content{flex:1;min-width:0}
+.dp-tag{
+  display:inline-block;
+  font-size:8px;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  font-weight:700;
+  padding:0.18rem 0.55rem;
+  border:1px solid;
+  margin-bottom:0.3rem;
+}
+.dp-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;
+  font-weight:300;
+  color:var(--text);
+  line-height:1.25;
+  margin-bottom:0.18rem;
+}
+.dp-title em{font-style:italic;color:var(--text3)}
+.dp-sub{
+  font-size:9px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--text4);
+}
+.dp-arrow{
+  font-size:0.85rem;
+  flex-shrink:0;
+  opacity:0;
+  transform:translateX(-4px);
+  transition:all 0.25s;
+}
+.drw-path:hover .dp-arrow,.drw-path.active-page .dp-arrow{
+  opacity:1;transform:translateX(0);
+}
+.dp-here{
+  position:absolute;
+  top:0.5rem;right:0.8rem;
+  font-size:7px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  padding:0.15rem 0.5rem;
+  border:1px solid;
+  opacity:0.6;
+}
+.dp-1 .dp-here{color:var(--cyan);border-color:var(--cyan)}
+.dp-2 .dp-here{color:var(--amber);border-color:var(--amber)}
+.dp-3 .dp-here{color:var(--pearl);border-color:var(--pearl)}
+.drw-footer{
+  border-top:1px solid var(--border);
+  padding:0.9rem 1.5rem;
+  flex-shrink:0;
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.drw-footer-logo{
+  font-size:9px;
+  letter-spacing:0.35em;
+  text-transform:uppercase;
+  color:var(--text4);
+}
+.drw-footer-logo span{color:var(--cyan)}
+.drw-dots{
+  display:flex;gap:6px;align-items:center;
+}
+.drw-dot{
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--border2);
+  transition:all 0.3s;
+}
+.drw-dot.active-1{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.drw-dot.active-2{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.drw-dot.active-3{background:var(--pearl);box-shadow:0 0 4px var(--pearl)}
+.drw-shutdown{
+  display:flex;align-items:center;gap:6px;
+  margin-left:10px;padding:5px 10px;
+  border:1px solid var(--border4);border-radius:6px;
+  background:transparent;color:var(--text3);
+  font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.25s;
+}
+.drw-shutdown:hover{
+  border-color:#e5484d;color:#e5484d;background:rgba(229,72,77,0.08);
+}
+.drw-shutdown svg{flex-shrink:0}
+@media(max-width:480px){
+  :root{--drawer-w:88vw}
+  .dp-num{font-size:1.6rem;min-width:1.9rem}
+  .dp-title{font-size:0.95rem}
+}
+</style>
+<div id="nav-overlay" onclick="navClose()"></div>
+<div id="nav-tab" onclick="navToggle()" role="button" tabindex="0"
+     aria-label="Abrir navegación" aria-expanded="false">
+  <div class="tab-lines">
+    <div class="tab-line"></div>
+    <div class="tab-line"></div>
+    <div class="tab-line"></div>
+  </div>
+  <div class="tab-label">Nav</div>
+</div>
+<nav id="nav-drawer" aria-label="Navegación principal" aria-hidden="true">
+  <div class="drw-header">
+    <div class="drw-logo"><em>Leyde</em> BOE</div>
+    <div class="drw-tagline">Motor Jurídico Legislativo</div>
+    <div class="drw-scan"></div>
+  </div>
+  <div class="drw-section-label">Módulos disponibles</div>
+  <div class="drw-paths">
+    <a class="drw-path dp-1" href="/" id="dp-enc">
+      <!-- Añade class="active-page" + <div class="dp-here">Estás aquí</div> en la página correspondiente -->
+      <div class="dp-num">I</div>
+      <div class="dp-content">
+        <div class="dp-tag">Explorar gratis</div>
+        <div class="dp-title">Gran <em>Enciclopedia</em><br>del BOE</div>
+        <div class="dp-sub">Investigación & Estudio</div>
+      </div>
+      <div class="dp-arrow">→</div>
+    </a>
+    <a class="drw-path dp-2" href="/maquetador-leydeboe.html" id="dp-maq">
+      <div class="dp-num">II</div>
+      <div class="dp-content">
+        <div class="dp-tag">Demo en vivo</div>
+        <div class="dp-title">Maquetador<br><em>Jurídico</em></div>
+        <div class="dp-sub">Documentos en un click</div>
+      </div>
+      <div class="dp-arrow">→</div>
+    </a>
+    <a class="drw-path dp-3" href="/planes-leydeboe.html" id="dp-pln">
+      <div class="dp-num">III</div>
+      <div class="dp-content">
+        <div class="dp-tag">Acceso completo</div>
+        <div class="dp-title">Planes &<br><em>Licencias</em></div>
+        <div class="dp-sub">Motor Jurídico Completo</div>
+      </div>
+      <div class="dp-arrow">→</div>
+    </a>
+  </div>
+  <div class="drw-footer">
+    <div class="drw-footer-logo">Leyde <span>BOE</span> · 2026</div>
+    <div class="drw-dots">
+      <div class="drw-dot" id="dot-1"></div>
+      <div class="drw-dot" id="dot-2"></div>
+      <div class="drw-dot" id="dot-3"></div>
+    </div>
+    <button class="drw-shutdown" onclick="apagarApp(event)" title="Cerrar y apagar el servidor" aria-label="Apagar aplicación">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+      <span>Apagar</span>
+    </button>
+  </div>
+</nav>
+<script>
+var NAV_CURRENT_PAGE = 'enc'; /* ← cambia esto en cada página */
+(function(){
+  /* Marca página activa */
+  var pageMap = {
+    enc: { id:'dp-enc', dot:'dot-1', cls:'active-1', label:'Estás aquí' },
+    maq: { id:'dp-maq', dot:'dot-2', cls:'active-2', label:'Estás aquí' },
+    pln: { id:'dp-pln', dot:'dot-3', cls:'active-3', label:'Estás aquí' }
+  };
+  var cfg = pageMap[NAV_CURRENT_PAGE];
+  if(cfg){
+    var el = document.getElementById(cfg.id);
+    if(el){
+      el.classList.add('active-page');
+      /* Añade badge */
+      var badge = document.createElement('div');
+      badge.className = 'dp-here';
+      badge.textContent = cfg.label;
+      el.appendChild(badge);
+      /* Bloquea navegación a la misma página */
+      el.setAttribute('href','javascript:void(0)');
+      el.style.cursor = 'default';
+    }
+    var dot = document.getElementById(cfg.dot);
+    if(dot) dot.classList.add(cfg.cls);
+  }
+})();
+function navToggle(){
+  var drawer = document.getElementById('nav-drawer');
+  var overlay = document.getElementById('nav-overlay');
+  var tab = document.getElementById('nav-tab');
+  var isOpen = drawer.classList.contains('open');
+  if(isOpen){ navClose(); }
+  else { navOpen(); }
+}
+function navOpen(){
+  var drawer = document.getElementById('nav-drawer');
+  var overlay = document.getElementById('nav-overlay');
+  var tab = document.getElementById('nav-tab');
+  drawer.classList.add('open');
+  overlay.classList.add('visible');
+  tab.classList.add('open');
+  tab.setAttribute('aria-expanded','true');
+  drawer.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+function navClose(){
+  var drawer = document.getElementById('nav-drawer');
+  var overlay = document.getElementById('nav-overlay');
+  var tab = document.getElementById('nav-tab');
+  drawer.classList.remove('open');
+  overlay.classList.remove('visible');
+  tab.classList.remove('open');
+  tab.setAttribute('aria-expanded','false');
+  drawer.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+}
+document.getElementById('nav-tab').addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===' '){ e.preventDefault(); navToggle(); }
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') navClose();
+});
+function apagarApp(ev){
+  if(ev && (ev.type==='click')) ev.preventDefault();
+  if(!confirm('¿Deseas cerrar la aplicación y apagar el servidor?')) return;
+
+  var icono = ev && ev.currentTarget ? ev.currentTarget : null;
+  if(icono){
+    var txt = icono.querySelector('span');
+    if(txt) txt.textContent='Apagando…';
+    icono.style.pointerEvents='none';
+  }
+
+  fetch('/api/shutdown', { method:'POST', headers:{'Content-Type':'application/json'} })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert('✅ ' + (d.message || 'Servidor apagado correctamente.'));
+    })
+    .catch(function(err){
+      alert('✅ Servidor apagado correctamente.');
+    })
+    .finally(function(){
+      if(icono){
+        var txt = icono.querySelector('span');
+        if(txt) txt.textContent='Apagar';
+        icono.style.pointerEvents='';
+      }
+      window.location.href='/';
+    });
+}
+</script>
+<style>
+body{
+  margin:0;background:#04090f;color:#e8eef4;
+  font-family:'Rajdhani',sans-serif;
+  min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,200,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,200,0.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0;
+}
+.demo-page{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:2rem;padding:2rem;text-align:center;
+}
+.demo-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,6vw,4rem);
+  font-weight:300;letter-spacing:0.2em;text-transform:uppercase;
+}
+.demo-title em{font-style:italic;color:#00d4c8}
+.demo-hint{
+  font-size:11px;letter-spacing:0.35em;text-transform:uppercase;
+  color:#3a5060;
+  display:flex;align-items:center;gap:1rem;
+}
+.demo-hint::before,.demo-hint::after{
+  content:'';height:1px;width:40px;background:rgba(255,255,255,0.08);
+}
+.demo-arrow{
+  position:fixed;left:56px;top:50%;transform:translateY(-50%);
+  font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+  color:#3a5060;display:flex;align-items:center;gap:0.5rem;
+  animation:hint-pulse 2s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes hint-pulse{
+  0%,100%{opacity:0.4;transform:translateY(-50%) translateX(0)}
+  50%{opacity:1;transform:translateY(-50%) translateX(6px)}
+}
+.demo-pages{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+}
+.demo-page-btn{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.08);
+  color:#5a7289;
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;letter-spacing:0.25em;text-transform:uppercase;
+  padding:0.6rem 1.4rem;cursor:pointer;transition:all 0.2s;
+}
+.demo-page-btn:hover{border-color:rgba(0,212,200,0.3);color:#00d4c8}
+</style>
+<div class="demo-page">
+  <div>
+    <div style="font-size:9px;letter-spacing:0.5em;text-transform:uppercase;color:#3a5060;margin-bottom:1rem">Vista demo</div>
+    <div class="demo-title"><em>Leyde</em> BOE</div>
+  </div>
+  <div class="demo-hint">Abre el cajón lateral</div>
+  <div class="demo-pages">
+    <button class="demo-page-btn" onclick="NAV_CURRENT_PAGE='enc'">← Simular página I</button>
+    <button class="demo-page-btn" onclick="NAV_CURRENT_PAGE='maq'">← Simular página II</button>
+    <button class="demo-page-btn" onclick="NAV_CURRENT_PAGE='pln'">← Simular página III</button>
+  </div>
+</div>
+<div class="demo-arrow">← pulsa la pestaña</div>
+</html>

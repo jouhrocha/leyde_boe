@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Leyde BOE — Acceder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a12;
+    --surface: #0a1220;
+    --border: rgba(0,212,200,0.15);
+    --accent: #00d4c8;
+    --accent2: #f5a623;
+    --text: #e8eef4;
+    --muted: #5a7289;
+    --error: #ff6b6b;
+    --success: #4fd1c5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Fondo decorativo */
+  body::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,212,200,0.06) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(245,166,35,0.04) 0%, transparent 70%);
+    bottom: -100px;
+    left: -100px;
+    pointer-events: none;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .tagline {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 9px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+  }
+
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* Formulario */
+  .form { display: none; flex-direction: column; gap: 16px; }
+  .form.visible { display: flex; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .btn:hover {
+    background: #00b8ad;
+    transform: translateY(-1px);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .msg {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .msg.error {
+    display: block;
+    background: rgba(255,107,107,0.1);
+    color: var(--error);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+
+  .msg.success {
+    display: block;
+    background: rgba(79,209,197,0.1);
+    color: var(--success);
+    border: 1px solid rgba(79,209,197,0.2);
+  }
+
+  .footer-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .footer-link a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer-link a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="logo">Leyde BOE</div>
+  <p class="tagline">Motor Jurídico Legislativo</p>
+
+  <div class="card">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Entrar</button>
+      <button class="tab" onclick="switchTab('register')">Registrarse</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form class="form visible" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••" required>
+      </div>
+      <div class="msg" id="loginMsg"></div>
+      <button type="submit" class="btn" id="loginBtn">Entrar</button>
+    </form>
+
+    <!-- REGISTRO -->
+    <form class="form" id="registerForm" onsubmit="handleRegister(event)">
+      <div class="field">
+        <label>Usuario</label>
+        <input type="text" id="regUser" placeholder="mi_usuario" required>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="tu@email.com" required>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="regPass" placeholder="Mínimo 8 caracteres" required>
+      </div>
+      <div class="msg" id="registerMsg"></div>
+      <button type="submit" class="btn" id="registerBtn">Crear cuenta</button>
+    </form>
+  </div>
+
+  <p class="footer-link">
+    <a href="/">← Volver al inicio</a>
+  </p>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+  });
+  document.getElementById('loginForm').classList.toggle('visible', tab === 'login');
+  document.getElementById('registerForm').classList.toggle('visible', tab === 'register');
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPass').value
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showMsg('loginMsg', '✓ Acceso correcto, redirigiendo...', 'success');
+      setTimeout(() => window.location.href = data.redirect, 800);
+    } else {
+      showMsg('loginMsg', data.error || 'Error de acceso', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  } catch {
+    showMsg('loginMsg', 'Error de conexión', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  btn.textContent = 'Creando cuenta...';
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: document.getElementById('regUser').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPass').value
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showMsg('registerMsg', '✓ Cuenta creada. Ya puedes entrar.', 'success');
+      setTimeout(() => switchTab('login'), 1500);
+    } else {
+      showMsg('registerMsg', data.error || 'Error al registrar', 'error');
+    }
+  } catch {
+    showMsg('registerMsg', 'Error de conexión', 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Crear cuenta';
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ Werkzeug==3.1.8
 beautifulsoup4==4.15.0
 requests==2.34.2
 urllib3==2.7.0
-pypdf==6.16.2
+pypdf==6.21.2
 whoosh
 fpdf2
 python-docx
